@@ -18,13 +18,6 @@ To set up a Chromebook with this kiosk page, follow these steps:
 3.  **Obtain the Public URL:** Get the public-facing URL for the hosted file (e.g., `https://your-username.github.io/your-repo-name/CartCheckIn.html`).
 4.  **Configure Kiosk Mode:** Using the Google Admin Console for the `harfordchristian.org` domain, configure a kiosk application to automatically launch with the URL from the previous step.
 
-### Project Structure
-
-.
-├── CartCheckIn.html      # The single HTML file containing the kiosk dashboard.
-└── README.md             # This file.
-
-
 ### File Contents
 
 `CartCheckIn.html` is a simple HTML5 document that uses `flexbox` for a two-column layout. It embeds a Google Calendar and a Google Form using `<iframe>` tags.
