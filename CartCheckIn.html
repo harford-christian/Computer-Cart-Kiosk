@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Computer Cart Management</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: sans-serif;
+            background-color: #333;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+        }
+        .left-panel, .right-panel {
+            flex: 1;
+            box-sizing: border-box;
+            padding: 10px; /* Optional padding */
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .loading-text {
+            color: white;
+            text-align: center;
+            padding-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <iframe src="https://calendar.google.com/calendar/embed?src=c_9157a8a9dc834d860425b20aa0a86b82e8738c4d57b2770033bde4ef5053819c%40group.calendar.google.com&ctz=America%2FNew_York"></iframe>
+        </div>
+        <div class="right-panel">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdXTNkAiQ1-WSdI9OdXIeNqjBt2_UcrZg1CtapS6oUSBlutLg/viewform?pli=1&pli=1"></iframe>
+        </div>
+    </div>
+</body>
+</html>
