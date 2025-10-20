@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Computer Cart Management</title>
+    <title>Computer Cart & Library Kiosk Checkout System</title>
     <style>
         body, html {
             margin: 0;
@@ -10,6 +10,7 @@
             overflow: hidden;
             font-family: sans-serif;
             background-color: #333;
+            color: white; /* Added for text visibility */
         }
         .container {
             display: flex;
@@ -18,7 +19,9 @@
         .left-panel, .right-panel {
             flex: 1;
             box-sizing: border-box;
-            padding: 10px; /* Optional padding */
+            padding: 20px; /* Increased padding for better spacing */
+            display: flex;
+            flex-direction: column;
         }
         iframe {
             border: none;
@@ -31,15 +34,29 @@
             text-align: center;
             padding-top: 50px;
         }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="left-panel">
-            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FNew_York&showPrint=0&mode=AGENDA&src=Y185MTU3YThhOWRjODM0ZDg2MDQyNWIyMGFhMGE4NmI4MmU4NzM4YzRkNTdiMjc3MDAzM2JkZTRlZjUwNTM4MTljQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y184ZDgyYjI0ODQ0NDI2NDVmOWRhOGVmYzdlZjNhNzJlZDRjNjViOTdmMTRiNTU2MzQyYTY5MzEzZTJlYjM5MGI0QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23b39ddb&color=%234285f4"></iframe>
+            <h1>Check Cart Availability</h1>
+            <p>1. Use the calendars below to find an available time slot for the **Library Cart** or **Mobile Cart**. The darker blocks indicate a confirmed reservation.</p>
+            <p>2. Once you have found an open slot, fill out the reservation form on the right.</p>
+            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FNew_York&showPrint=0&mode=WEEK&src=Y185MTU3YThhOWRjODM0ZDg2MDQyNWIyMGFhMGE4NmI4MmU4NzM4YzRkNTdiMjc3MDAzM2JkZTRlZjUwNTM4MTljQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y184ZDgyYjI0ODQ0NDI2NDVmOWRhOGVmYzdlZjNhNzJlZDRjNjViOTdmMTRiNTU2MzQyYTY5MzEzZTJlYjM5MGI0QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23b39ddb&color=%234285f4"></iframe>
         </div>
+
         <div class="right-panel">
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdXTNkAiQ1-WSdI9OdXIeNqjBt2_UcrZg1CtapS6oUSBlutLg/viewform?pli=1&pli=1"></iframe>
+            <h1>Request a Reservation</h1>
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdXTNkAiQ1-WSdI9OdXIeNqjBt2_UcrZg1CtapS6oUSBlutLg/viewform?usp=header"></iframe>
         </div>
     </div>
 </body>
