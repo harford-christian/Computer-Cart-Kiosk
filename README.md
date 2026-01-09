@@ -14,13 +14,13 @@ The primary goal of this project is to create a reliable and secure system that:
 To set up a Chromebook with this kiosk page, follow these steps:
 
 1.  **Clone the Repository:** Clone this repository to your local machine.
-2.  **Host the `CartCheckIn.html` File:** Upload the `CartCheckIn.html` file to a reliable web hosting service (such as GitHub Pages or a school-managed server).
-3.  **Obtain the Public URL:** Get the public-facing URL for the hosted file (e.g., `https://your-username.github.io/your-repo-name/CartCheckIn.html`).
+2.  **Host the `index.html` File:** Upload the `index.html` file to a reliable web hosting service (such as GitHub Pages or a school-managed server).
+3.  **Obtain the Public URL:** Get the public-facing URL for the hosted file (e.g., `https://your-username.github.io/your-repo-name/index.html`).
 4.  **Configure Kiosk Mode:** Using the Google Admin Console for the `harfordchristian.org` domain, configure a kiosk application to automatically launch with the URL from the previous step.
 
 ### File Contents
 
-`CartCheckIn.html` is a simple HTML5 document that uses `flexbox` for a two-column layout. It embeds a Google Calendar and a Google Form using `<iframe>` tags.
+`index.html` is a simple HTML5 document that uses `flexbox` for a two-column layout. It embeds a Google Calendar and a Google Form using `<iframe>` tags.
 
 ### Maintenance
 
