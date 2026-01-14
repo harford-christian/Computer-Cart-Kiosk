@@ -19,7 +19,6 @@
         .left-panel, .right-panel {
             flex: 1;
             box-sizing: border-box;
-            /* Reduced padding to lessen space between sections and top margin */
             padding: 5px; 
             display: flex;
             flex-direction: column;
@@ -27,8 +26,6 @@
         iframe {
             border: none;
             width: 100%;
-            /* Changed height: 100% to flex: 1. 
-               This forces the iframe to fill all remaining vertical space */
             flex: 1; 
             display: block;
         }
@@ -45,7 +42,8 @@
         }
         p {
             font-size: 18px;
-            line-height: 2; 
+            /* Adjusted line-height for balanced spacing */
+            line-height: 1.6; 
             margin-top: 0;
             margin-bottom: 5px;
         }
