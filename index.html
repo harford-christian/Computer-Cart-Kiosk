@@ -10,7 +10,7 @@
             overflow: hidden;
             font-family: sans-serif;
             background-color: #333;
-            color: white; /* Added for text visibility */
+            color: white;
         }
         .container {
             display: flex;
@@ -19,14 +19,17 @@
         .left-panel, .right-panel {
             flex: 1;
             box-sizing: border-box;
-            padding: 10px; /* Increased padding for better spacing */
+            /* Reduced padding to lessen space between sections and top margin */
+            padding: 5px; 
             display: flex;
             flex-direction: column;
         }
         iframe {
             border: none;
             width: 100%;
-            height: 100%;
+            /* Changed height: 100% to flex: 1. 
+               This forces the iframe to fill all remaining vertical space */
+            flex: 1; 
             display: block;
         }
         .loading-text {
@@ -36,12 +39,17 @@
         }
         h1 {
             text-align: center;
-            margin-bottom: 10px;
+            /* Removed top margin and reduced bottom margin */
+            margin-top: 0; 
+            margin-bottom: 5px;
+            font-size: 1.5em; /* Optional: Slightly smaller header to save space */
         }
         p {
             font-size: 18px;
-            line-height: 1.5;
-            margin-bottom: 10px;
+            /* Reduced line height and margin for tighter text */
+            line-height: 1.2; 
+            margin-top: 0;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -49,8 +57,8 @@
     <div class="container">
         <div class="left-panel">
             <h1>Check Cart Availability</h1>
-            <p>1. Use the calendars below to find an available time slot for the Library Cart or Mobile Cart.
-               2. Once you have found an open slot, fill out the reservation form on the right.
+            <p>1. Use the calendars below to find an available time slot for the Library Cart or Mobile Cart.<br>
+               2. Once you have found an open slot, fill out the reservation form on the right.<br>
                3. To refresh the calendar, switch to the Schedule tab and click "Look for more".</p>
             <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FNew_York&showPrint=0&mode=WEEK&hstart=8&vend=1700&src=Y185MTU3YThhOWRjODM0ZDg2MDQyNWIyMGFhMGE4NmI4MmU4NzM4YzRkNTdiMjc3MDAzM2JkZTRlZjUwNTM4MTljQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y184ZDgyYjI0ODQ0NDI2NDVmOWRhOGVmYzdlZjNhNzJlZDRjNjViOTdmMTRiNTU2MzQyYTY5MzEzZTJlYjM5MGI0QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23b39ddb&color=%234285f4"></iframe>
         </div>
