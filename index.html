@@ -1,62 +1,1113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Computer Cart & Library Kiosk Checkout System</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-family: sans-serif;
-            background-color: #000000;
-            color: white;
-        }
-        .container {
-            display: flex;
-            height: 100%;
-        }
-        .left-panel, .right-panel {
-            flex: 1;
-            box-sizing: border-box;
-            padding: 5px; 
-            display: flex;
-            flex-direction: column;
-        }
-        iframe {
-            border: none;
-            width: 100%;
-            flex: 1; 
-            display: block;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 0; 
-            margin-bottom: 5px;
-            font-size: 32px;
-        }
-        p {
-            font-size: 18px;
-            line-height: 1.4; 
-            margin-top: 0;
-            margin-bottom: 10px; 
-            padding-left: 100px; 
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Cart Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* School red palette */
+    --primary:      #c81e1e;
+    --primary-dark: #7f1d1d;
+    --primary-lt:   #fef2f2;
+    --primary-mid:  #ef4444;
+    /* Status colors */
+    --green:     #15803d;
+    --green-lt:  #dcfce7;
+    --amber:     #b45309;
+    --amber-lt:  #fef3c7;
+    --danger:    #991b1b;
+    --danger-lt: #fee2e2;
+    --purple:    #6d28d9;
+    --purple-lt: #ede9fe;
+    /* Neutrals */
+    --gray:    #6b7280;
+    --gray-lt: #f9fafb;
+    --border:  #e5e7eb;
+    --bg:      #f8f8f8;
+    --white:   #ffffff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.06);
+    --shadow-lg: 0 10px 32px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.08);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: #111827;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    box-shadow: 0 2px 12px rgba(127,29,29,.4);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-badge {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: rgba(255,255,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 800; letter-spacing: -.01em; flex-shrink: 0;
+  }
+  header h1 { font-size: 1.1rem; font-weight: 700; }
+  header .sub { font-size: .78rem; opacity: .78; margin-top: 1px; }
+  .user-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.18); border-radius: 99px;
+    padding: 6px 14px 6px 6px; font-size: .82rem;
+  }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 99px;
+    background: rgba(255,255,255,.92); color: var(--primary-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .78rem; font-weight: 700; flex-shrink: 0;
+  }
+  .user-name  { font-weight: 600; }
+  .user-email { opacity: .75; font-size: .76rem; }
+
+  /* ── Layout ── */
+  main { max-width: 1080px; margin: 0 auto; padding: 28px 16px; }
+
+  section {
+    background: var(--white); border-radius: var(--radius);
+    padding: 22px 22px 24px; margin-bottom: 20px;
+    box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+  }
+  section h2 {
+    font-size: .85rem; font-weight: 700; color: var(--primary);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 7px;
+  }
+  section h2::before {
+    content: ''; display: inline-block;
+    width: 3px; height: 14px; border-radius: 2px; background: var(--primary);
+  }
+
+  /* ── Week navigation ── */
+  .week-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .nav-full { /* shown desktop, hidden mobile */ }
+  #weekLabel { font-size: .9rem; color: var(--gray); font-weight: 600; width: 100%; order: 10; margin-top: 4px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 8px 16px; border-radius: 8px; font-size: .85rem; font-weight: 600;
+    border: none; cursor: pointer; transition: all .15s; font-family: inherit;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,.12); }
+  .btn:active { transform: none; box-shadow: none; }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-primary   { background: var(--primary); color: white; }
+  .btn-secondary { background: var(--white); color: #374151; border: 1px solid var(--border); }
+  .btn-success   { background: var(--green);  color: white; }
+  .btn-danger    { background: var(--danger); color: white; }
+  .btn-sm        { padding: 5px 11px; font-size: .85rem; border-radius: 6px; }
+
+  /* ── Availability grid ── */
+  .grid-wrap {
+    overflow-x: auto; margin-top: 12px;
+    border-radius: 10px; border: 1px solid var(--border);
+  }
+  table { width: 100%; border-collapse: collapse; min-width: 600px; }
+  th, td { padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border); font-size: .9rem; }
+  th {
+    background: var(--primary-lt); color: var(--primary);
+    font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em;
+    position: sticky; top: 0; z-index: 1; white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.time-col {
+    font-weight: 600; color: var(--gray); text-align: left; white-space: nowrap;
+    background: var(--gray-lt); font-size: .85rem;
+    border-right: 1px solid var(--border); position: sticky; left: 0; z-index: 1;
+    min-width: 105px;
+  }
+
+  td.free { background: var(--green-lt); color: var(--green); cursor: pointer; transition: background .15s; }
+  td.free:hover { background: #bbf7d0; }
+  td.free:active { background: #86efac; }
+  td.booked      { background: var(--amber-lt); color: var(--amber); }
+  td.checked-out { background: #fce7f3; color: #9d174d; }
+  td.returned    { background: var(--purple-lt); color: var(--purple); }
+  td.mixed       { background: #f0fdf4; }
+
+  .cell-inner { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+  .cell-label { font-size: .85rem; font-weight: 700; }
+  .cell-sub   { font-size: .78rem; opacity: .8; max-width: 130px; overflow: hidden;
+                text-overflow: ellipsis; white-space: nowrap; }
+  .cell-btns  { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+
+  /* ── My reservations ── */
+  .res-list { display: flex; flex-direction: column; gap: 10px; }
+  .res-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    border-left: 4px solid var(--border); transition: box-shadow .15s;
+  }
+  .res-card:hover { box-shadow: var(--shadow-sm); }
+  .res-card:active { box-shadow: var(--shadow-sm); transform: scale(0.99); }
+  .res-card.status-reserved    { border-left-color: var(--amber); }
+  .res-card.status-checked-out { border-left-color: var(--green); }
+  .res-card.status-returned    { border-left-color: var(--purple); }
+  .res-info { line-height: 1.55; }
+  .res-info strong { font-size: .95rem; font-weight: 600; }
+  .res-info small  { color: var(--gray); font-size: .85rem; display: block; margin-top: 1px; }
+  .res-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 9px; border-radius: 99px; font-size: .8rem; font-weight: 700; margin-top: 4px;
+  }
+  .badge-reserved    { background: var(--amber-lt);  color: var(--amber); }
+  .badge-checked-out { background: var(--green-lt);  color: var(--green); }
+  .badge-returned    { background: var(--purple-lt); color: var(--purple); }
+
+  /* ── Status dots (replaces emoji) ── */
+  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; vertical-align: middle; margin-right: 3px; }
+  .status-dot-reserved    { background: var(--amber); }
+  .status-dot-checked-out { background: var(--green); }
+  .status-dot-returned    { background: var(--purple); }
+
+  /* ── Calendar embed ── */
+  .cal-tabs { display: flex; gap: 2px; border-bottom: 2px solid var(--border); margin-bottom: 18px; flex-wrap: wrap; }
+  .cal-tab {
+    padding: 9px 18px; font-size: .875rem; font-weight: 600; color: var(--gray);
+    cursor: pointer; border: none; background: none; font-family: inherit;
+    border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color .15s;
+    border-radius: 6px 6px 0 0;
+  }
+  .cal-tab:hover { color: var(--primary); background: var(--primary-lt); }
+  .cal-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: var(--primary-lt); }
+  .cal-frame { display: none; width: 100%; height: 540px; border: 1px solid var(--border);
+               border-radius: 10px; opacity: 0; transition: opacity .3s; }
+  .cal-frame.active { display: block; }
+  .cal-frame.loaded { opacity: 1; }
+  .cal-note {
+    margin-top: 12px; padding: 10px 14px; background: var(--amber-lt);
+    border-radius: 8px; font-size: .8rem; color: var(--amber); border: 1px solid #fcd34d;
+  }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 100; backdrop-filter: blur(3px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white; border-radius: 16px; padding: 28px;
+    width: min(480px, 95vw); box-shadow: var(--shadow-lg);
+    animation: slideUp .2s ease-out; max-height: 92vh; overflow-y: auto;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .modal-handle { display: none; }
+  body.is-mobile .modal-handle {
+    display: block; width: 36px; height: 4px;
+    background: #d1d5db; border-radius: 2px;
+    margin: -8px auto 16px;
+  }
+  .modal h3 {
+    font-size: 1.05rem; font-weight: 700; margin-bottom: 20px; color: var(--primary);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .form-row { margin-bottom: 14px; }
+  .form-row label {
+    display: block; font-size: .77rem; font-weight: 600; color: var(--gray);
+    margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em;
+  }
+  .form-row input[type="text"],
+  .form-row input[type="number"],
+  .form-row input[type="date"],
+  .form-row select {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; font-size: .9rem; font-family: inherit; background: var(--gray-lt);
+  }
+  .form-row input:focus, .form-row select:focus {
+    outline: none; border-color: var(--primary); background: white;
+    box-shadow: 0 0 0 3px rgba(200,30,30,.12);
+  }
+  .form-row input[readonly] { background: #f3f4f6; color: var(--gray); cursor: default; }
+
+  /* Recurring section */
+  .toggle-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px; border-radius: 8px; background: var(--primary-lt);
+    border: 1px solid #fecaca; cursor: pointer; margin-bottom: 14px;
+  }
+  .toggle-row input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+  .toggle-row label { font-size: .875rem; font-weight: 600; color: var(--primary); cursor: pointer; margin: 0; }
+  .recurring-options {
+    border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+    margin-bottom: 14px; background: var(--gray-lt); display: none;
+  }
+  .recur-radio-row {
+    display: flex; align-items: center; gap: 8px; padding: 7px 0;
+    font-size: .875rem; font-weight: 500; cursor: pointer;
+  }
+  .recur-radio-row input[type="radio"] { accent-color: var(--primary); cursor: pointer; }
+  .recur-inline-input {
+    border: 1.5px solid var(--border); border-radius: 6px;
+    padding: 4px 8px; font-size: .875rem; font-family: inherit;
+    background: white; display: inline-block;
+  }
+  .recur-inline-input:focus { outline: none; border-color: var(--primary); }
+
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ── Loading / empty ── */
+  .loading { text-align: center; padding: 28px; color: var(--gray); font-size: .875rem; }
+  .empty   { text-align: center; padding: 20px; color: var(--gray); font-size: .875rem; }
+
+  /* ── Spinner ── */
+  .spinner {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,.4); border-top-color: white;
+    border-radius: 99px; animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 28px; right: 28px; z-index: 200;
+    padding: 12px 20px; border-radius: 99px; font-size: .875rem; font-weight: 600;
+    font-family: inherit; opacity: 0; transform: translateY(10px);
+    transition: opacity .25s, transform .25s; pointer-events: none;
+    box-shadow: var(--shadow-md);
+  }
+  #toast.show { opacity: 1; transform: none; }
+  #toast.success { background: #111827; color: white; }
+  #toast.error   { background: var(--danger); color: white; }
+  #toast.confirm { background: #1f2937; border-radius: 12px; padding: 12px 16px; pointer-events: auto; }
+
+  /* ── Day selector (mobile) ── */
+  .day-selector {
+    display: flex; gap: 6px; overflow-x: auto; padding: 12px 0 8px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .day-selector::-webkit-scrollbar { display: none; }
+  .day-btn {
+    flex-shrink: 0; padding: 10px 16px; border-radius: 22px;
+    border: 1.5px solid var(--border); background: var(--white);
+    font-size: .88rem; font-weight: 600; color: var(--gray); cursor: pointer;
+    font-family: inherit; transition: all .15s; white-space: nowrap; line-height: 1.3;
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+  }
+  .day-btn .day-name { font-size: .82rem; }
+  .day-btn .day-date { font-size: .72rem; opacity: .7; }
+  .day-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .day-btn.active .day-date { opacity: .85; }
+  .day-btn:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+  .day-btn:active { transform: scale(0.96); }
+  .day-btn.today-btn:not(.active) { border-color: var(--primary-mid); color: var(--primary); }
+
+  /* ── Mobile (class set via JS using screen.width) ── */
+  body.is-mobile { font-size: 18px; }
+
+  body.is-mobile header { padding: 12px 16px; gap: 10px; flex-wrap: nowrap; align-items: center; }
+  body.is-mobile .header-badge { width: 36px; height: 36px; font-size: .9rem; flex-shrink: 0; }
+  body.is-mobile header h1 { font-size: 1.15rem; }
+  body.is-mobile header .sub { font-size: .9rem; opacity: .85; }
+  body.is-mobile .user-pill { padding: 5px 10px 5px 5px; font-size: .9rem; gap: 7px; flex-shrink: 0; }
+  body.is-mobile .user-email { display: none; }
+  body.is-mobile .user-avatar { width: 30px; height: 30px; font-size: .85rem; }
+
+  body.is-mobile main { padding: 10px 14px; }
+  body.is-mobile section { padding: 14px 14px 18px; margin-bottom: 10px; }
+  body.is-mobile section h2 { font-size: 1.25rem; margin-bottom: 14px; }
+  body.is-mobile section h2::before { height: 20px; }
+
+  body.is-mobile .week-nav { gap: 6px; flex-wrap: wrap; }
+  body.is-mobile .nav-full { display: none; }
+  body.is-mobile .week-prev { order: 1; flex: unset; padding: 14px 22px; font-size: 1.2rem; }
+  body.is-mobile .week-next { order: 3; flex: unset; padding: 14px 22px; font-size: 1.2rem; }
+  body.is-mobile #weekLabel { order: 2; flex: 1; text-align: center; width: auto; margin-top: 0; font-size: 1.15rem; font-weight: 700; color: #111827; }
+
+  body.is-mobile .day-selector {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    overflow-x: visible; gap: 4px; padding: 8px 0;
+  }
+  body.is-mobile .day-btn {
+    padding: 12px 4px; border-radius: 12px; font-size: 1rem; flex-shrink: 1;
+    min-height: 60px;
+  }
+  body.is-mobile .day-btn .day-name { font-size: 1rem; }
+  body.is-mobile .day-btn .day-date { font-size: .88rem; }
+  body.is-mobile .day-btn.today-btn:not(.active)::after {
+    content: ''; display: block; width: 4px; height: 4px;
+    border-radius: 50%; background: var(--primary-mid); margin: 2px auto 0;
+  }
+
+  body.is-mobile th, body.is-mobile td { padding: 12px 8px; font-size: 1.05rem; }
+  body.is-mobile td.time-col { min-width: 96px; font-size: 1rem; padding: 12px 8px; }
+  body.is-mobile .cell-label { font-size: 1.05rem; }
+  body.is-mobile .cell-sub { font-size: .95rem; }
+  body.is-mobile .btn-sm { padding: 11px 14px; font-size: 1rem; min-height: 48px; }
+  body.is-mobile .cell-btns { gap: 6px; }
+
+  body.is-mobile #cartTabs {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; border-bottom: none; margin-bottom: 10px; padding: 2px 0;
+    overflow-x: visible; flex-wrap: nowrap;
+  }
+  body.is-mobile #cartTabs .cal-tab {
+    flex: none; text-align: center; padding: 18px 10px;
+    font-size: 1.1rem; font-weight: 700; border-radius: 12px;
+    border: 2px solid var(--border); background: var(--white);
+    color: #374151; border-bottom-color: var(--border); margin-bottom: 0;
+    white-space: nowrap; transition: all .15s;
+    box-shadow: inset 0 0 0 1.5px var(--border);
+  }
+  body.is-mobile #cartTabs .cal-tab.active {
+    background: var(--primary); color: white;
+    border-color: var(--primary); border-bottom-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(200,30,30,.25);
+  }
+  body.is-mobile .cal-tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
+  body.is-mobile .cal-tab { padding: 12px 18px; font-size: 1rem; white-space: nowrap; }
+
+  body.is-mobile .res-card { flex-direction: column; align-items: flex-start; padding: 16px 16px; }
+  body.is-mobile .res-actions { width: 100%; display: flex; gap: 8px; }
+  body.is-mobile .res-actions .btn { flex: 1; justify-content: center; padding: 14px 8px; font-size: 1rem; }
+  body.is-mobile .res-info strong { font-size: 1.15rem; }
+  body.is-mobile .res-info small { font-size: 1rem; }
+
+  body.is-mobile .modal-overlay { align-items: flex-end; }
+  body.is-mobile .modal {
+    width: 100vw; max-width: none; border-radius: 20px 20px 0 0;
+    padding: 24px 20px 36px; max-height: 92vh;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  body.is-mobile .modal h3 { font-size: 1.3rem; }
+  body.is-mobile .form-row label { font-size: 1rem; }
+  body.is-mobile .modal input, body.is-mobile .modal select { font-size: 16px !important; padding: 15px 16px !important; border-radius: 10px !important; }
+  body.is-mobile .modal label { font-size: 1rem !important; }
+  body.is-mobile .toggle-row label { font-size: 1.1rem !important; }
+  body.is-mobile .recur-radio-row { font-size: 1.05rem; }
+  body.is-mobile .recur-inline-input { font-size: 16px !important; padding: 10px 12px !important; }
+  body.is-mobile .modal-actions { flex-direction: column-reverse; }
+  body.is-mobile .modal-actions .btn { width: 100%; justify-content: center; padding: 17px; font-size: 1.1rem; }
+
+  body.is-mobile .cal-frame { height: 520px; }
+
+  body.is-mobile #toast { right: 50%; transform: translateX(50%) translateY(10px); bottom: 20px; font-size: 1rem; }
+  body.is-mobile #toast.show { transform: translateX(50%) translateY(0); }
+
+  body.is-small-mobile td.time-col { min-width: 82px; font-size: .9rem; }
+  body.is-small-mobile .week-prev,
+  body.is-small-mobile .week-next { padding: 12px 16px; font-size: 1.05rem; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="left-panel">
-            <h1>Check Cart Availability</h1>
-            <p>1. Use the calendars below to find an available time slot for the Library Cart or Mobile Cart.</p>
-            <p>2. Once you have found an open slot, fill out the reservation form on the right.</p>
-            <p>3. To refresh the calendar, switch to the Schedule tab and click "Look for more".</p>
-            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FNew_York&showPrint=0&mode=WEEK&hstart=8&vend=1700&src=Y185MTU3YThhOWRjODM0ZDg2MDQyNWIyMGFhMGE4NmI4MmU4NzM4YzRkNTdiMjc3MDAzM2JkZTRlZjUwNTM4MTljQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y184ZDgyYjI0ODQ0NDI2NDVmOWRhOGVmYzdlZjNhNzJlZDRjNjViOTdmMTRiNTU2MzQyYTY5MzEzZTJlYjM5MGI0QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23b39ddb&color=%234285f4"></iframe>
-        </div>
 
-        <div class="right-panel">
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdXTNkAiQ1-WSdI9OdXIeNqjBt2_UcrZg1CtapS6oUSBlutLg/viewform?usp=header"></iframe>
-        </div>
+<header>
+  <div class="header-left">
+    <div class="header-badge">HCS</div>
+    <div>
+      <h1>Computer Cart Checkout</h1>
+      <div class="sub">Harford Christian School</div>
     </div>
+  </div>
+  <div id="userInfo"><span style="color:rgba(255,255,255,.7);font-size:.82rem">Loading...</span></div>
+</header>
+
+<main>
+
+  <!-- My Reservations -->
+  <section>
+    <h2>My Upcoming Reservations</h2>
+    <div id="myRes" class="loading">Loading...</div>
+  </section>
+
+  <!-- Cart Availability + Calendar (unified) -->
+  <section>
+    <h2>Cart Schedule</h2>
+    <div id="cartTabs" class="cal-tabs" style="display:none"></div>
+    <div class="week-nav" style="margin-top:8px">
+      <button class="btn btn-secondary week-prev" onclick="changeWeek(-1)">&#8592;<span class="nav-full"> Prev Week</span></button>
+      <div id="weekLabel"></div>
+      <button class="btn btn-secondary week-next" onclick="changeWeek(1)"><span class="nav-full">Next Week </span>&#8594;</button>
+    </div>
+    <div class="grid-wrap">
+      <div id="gridContent" class="loading" style="padding:28px">Loading availability...</div>
+    </div>
+    <div id="calFrames" style="margin-top:10px"></div>
+  </section>
+
+</main>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-handle" aria-hidden="true"></div>
+    <h3>Book a Cart Slot</h3>
+
+    <div class="form-row">
+      <label>Cart</label>
+      <input type="text" id="mCart" readonly>
+    </div>
+
+    <div class="form-row">
+      <label>Date</label>
+      <input type="text" id="mDate" readonly>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:14px">
+      <div style="flex:1">
+        <label style="display:block;font-size:.77rem;font-weight:600;color:var(--gray);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Start Time</label>
+        <select id="mStartHour" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:.9rem;font-family:inherit;background:var(--gray-lt)"></select>
+      </div>
+      <div style="flex:1">
+        <label style="display:block;font-size:.77rem;font-weight:600;color:var(--gray);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">End Time</label>
+        <select id="mEndHour" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:.9rem;font-family:inherit;background:var(--gray-lt)"></select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>Your Name</label>
+      <input type="text" id="mName" placeholder="e.g. Ms. Smith">
+    </div>
+
+    <div class="form-row">
+      <label>Period / Class (optional)</label>
+      <input type="text" id="mPeriod" placeholder="e.g. 2nd Period — English 10">
+    </div>
+
+    <!-- Recurring toggle -->
+    <div class="toggle-row" onclick="document.getElementById('mRecurring').click()">
+      <input type="checkbox" id="mRecurring" onclick="event.stopPropagation();toggleRecurring()">
+      <label for="mRecurring">Repeat weekly</label>
+    </div>
+
+    <div class="recurring-options" id="recurringOptions">
+      <div class="recur-radio-row">
+        <input type="radio" name="recurType" id="recurWeeks" value="weeks" checked onchange="toggleRecurType()">
+        <label for="recurWeeks" style="cursor:pointer">Repeat for</label>
+        <input type="number" id="mWeeks" value="18" min="1" max="52" class="recur-inline-input" style="width:60px">
+        <span>weeks</span>
+      </div>
+      <div class="recur-radio-row">
+        <input type="radio" name="recurType" id="recurDate" value="date" onchange="toggleRecurType()">
+        <label for="recurDate" style="cursor:pointer">Until date</label>
+        <input type="date" id="mEndDate" class="recur-inline-input" style="width:160px">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitBooking()">Reserve Cart</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── State ────────────────────────────────────────────
+var currentUser      = { email: '', name: '' };
+var pendingBooking   = null;
+var currentWeekMonday = null;
+var DAY_START = 7;
+var DAY_END   = 16;
+
+// ── Init ─────────────────────────────────────────────
+(function init() {
+  setWeekToday();
+  if (screen.width <= 768) {
+    document.body.classList.add('is-mobile');
+    window._mobileScale = window.innerWidth / screen.width;
+  }
+  if (screen.width <= 400) document.body.classList.add('is-small-mobile');
+  google.script.run
+    .withSuccessHandler(function(u) {
+      currentUser = u;
+      var initial = (u.name || u.email || '?')[0].toUpperCase();
+      document.getElementById('userInfo').innerHTML =
+        '<div class="user-pill">' +
+        '<div class="user-avatar">' + esc(initial) + '</div>' +
+        '<div><div class="user-name">' + esc(u.name) + '</div>' +
+        '<div class="user-email">' + esc(u.email) + '</div></div>' +
+        '</div>';
+    })
+    .withFailureHandler(function(e) {
+      document.getElementById('userInfo').innerHTML =
+        '<span style="color:#fca5a5;font-size:.82rem">' + esc(e.message) + '</span>';
+    })
+    .getCurrentUser();
+
+  loadWeekAvailability();
+  loadMyReservations();
+  loadCalendarEmbeds();
+})();
+
+// ── Week helpers ─────────────────────────────────────
+function getMonday(d) {
+  var day  = d.getDay();
+  var diff = (day === 0) ? -6 : 1 - day;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + diff);
+}
+
+function setWeekToday() {
+  currentWeekMonday = getMonday(new Date());
+  updateWeekLabel();
+}
+
+function goThisWeek() {
+  setWeekToday();
+  loadWeekAvailability();
+}
+
+function changeWeek(delta) {
+  currentWeekMonday = new Date(
+    currentWeekMonday.getFullYear(),
+    currentWeekMonday.getMonth(),
+    currentWeekMonday.getDate() + delta * 7
+  );
+  updateWeekLabel();
+  loadWeekAvailability();
+}
+
+function updateWeekLabel() {
+  var fri    = new Date(currentWeekMonday.getFullYear(), currentWeekMonday.getMonth(), currentWeekMonday.getDate() + 4);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var label;
+  if (currentWeekMonday.getMonth() === fri.getMonth()) {
+    label = months[currentWeekMonday.getMonth()] + ' ' + currentWeekMonday.getDate() +
+            '–' + fri.getDate() + ', ' + fri.getFullYear();
+  } else {
+    label = months[currentWeekMonday.getMonth()] + ' ' + currentWeekMonday.getDate() +
+            ' – ' + months[fri.getMonth()] + ' ' + fri.getDate() + ', ' + fri.getFullYear();
+  }
+  document.getElementById('weekLabel').textContent = label;
+}
+
+function toDateString(d) {
+  return d.getFullYear() + '-' +
+         String(d.getMonth() + 1).padStart(2, '0') + '-' +
+         String(d.getDate()).padStart(2, '0');
+}
+
+function formatHour(h) {
+  if (h === 0)  return '12:00 AM';
+  if (h < 12)   return h + ':00 AM';
+  if (h === 12) return '12:00 PM';
+  return (h - 12) + ':00 PM';
+}
+
+// ── Week availability grid ────────────────────────────
+function loadWeekAvailability() {
+  var mondayStr = toDateString(currentWeekMonday);
+  document.getElementById('gridContent').innerHTML =
+    '<div class="loading" style="padding:28px">Loading...</div>';
+  google.script.run
+    .withSuccessHandler(renderWeekGrid)
+    .withFailureHandler(function(e) {
+      document.getElementById('gridContent').innerHTML =
+        '<div class="empty" style="color:var(--danger)">Error: ' + esc(e.message) + '</div>';
+    })
+    .getWeekAvailability(mondayStr);
+}
+
+var lastWeekData     = null;
+var activeCartTabIdx = 0;
+var selectedDayIdx   = 0;
+
+function initSelectedDay() {
+  var today   = new Date();
+  var todayMon = getMonday(today);
+  if (toDateString(todayMon) === toDateString(currentWeekMonday)) {
+    var dow = today.getDay();
+    if (dow === 0 || dow === 6) {
+      selectedDayIdx = 0;
+    } else {
+      selectedDayIdx = dow - 1;
+    }
+  } else {
+    selectedDayIdx = 0;
+  }
+}
+
+function renderWeekGrid(weekData) {
+  if (!weekData || weekData.length === 0) {
+    document.getElementById('gridContent').innerHTML = '<div class="empty">No data.</div>';
+    return;
+  }
+  var cartNames = Object.keys(weekData[0].data);
+  if (cartNames.length === 0) {
+    document.getElementById('gridContent').innerHTML =
+      '<div class="empty">No carts configured. Add LIBRARY_CART_ID to Script Properties.</div>';
+    return;
+  }
+
+  lastWeekData = weekData;
+  initSelectedDay();
+
+  var tabsEl = document.getElementById('cartTabs');
+  if (cartNames.length > 1) {
+    tabsEl.style.display = 'flex';
+    tabsEl.innerHTML = cartNames.map(function(name, i) {
+      return '<button class="cal-tab' + (i === activeCartTabIdx ? ' active' : '') + '" ' +
+             'onclick="switchCartTab(' + i + ')">' + esc(name) + '</button>';
+    }).join('');
+  } else {
+    tabsEl.style.display = 'none';
+    activeCartTabIdx = 0;
+  }
+
+  renderCartGrid(activeCartTabIdx);
+}
+
+function switchCartTab(idx) {
+  activeCartTabIdx = idx;
+  var tabs = document.getElementById('cartTabs').querySelectorAll('.cal-tab');
+  tabs.forEach(function(t, i) {
+    t.classList.toggle('active', i === idx);
+  });
+  renderCartGrid(idx);
+  var frames = document.querySelectorAll('.cal-frame');
+  frames.forEach(function(f, i) {
+    if (i === idx) {
+      f.classList.add('active');
+      if (!f.getAttribute('data-loaded')) {
+        f.src = f.getAttribute('data-src');
+        f.setAttribute('data-loaded', '1');
+      }
+    } else {
+      f.classList.remove('active');
+    }
+  });
+}
+
+function renderCartGrid(cartIdx) {
+  if (!lastWeekData) return;
+  var cartName = Object.keys(lastWeekData[0].data)[cartIdx];
+  var isMobile = screen.width <= 768;
+  document.getElementById('gridContent').innerHTML = isMobile
+    ? buildMobileDayGridHtml(cartName)
+    : buildFullWeekGridHtml(cartName);
+}
+
+function selectDay(idx) {
+  selectedDayIdx = idx;
+  renderCartGrid(activeCartTabIdx);
+}
+
+function buildDaySelector() {
+  var today = toDateString(new Date());
+  var html  = '<div class="day-selector">';
+  lastWeekData.forEach(function(day, i) {
+    var parts   = day.dayLabel.split(' ');
+    var dayName = parts[0] || day.dayLabel;
+    var dayDate = parts[1] || '';
+    var isToday = day.dateStr === today;
+    html += '<button class="day-btn' +
+            (i === selectedDayIdx ? ' active' : '') +
+            (isToday ? ' today-btn' : '') + '" ' +
+            'onclick="selectDay(' + i + ')">' +
+            '<span class="day-name">' + esc(dayName) + '</span>' +
+            (dayDate ? '<span class="day-date">' + esc(dayDate) + '</span>' : '') +
+            '</button>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildMobileDayGridHtml(cartName) {
+  if (!lastWeekData || !lastWeekData[selectedDayIdx]) {
+    return '<div class="empty">No layout data available for today.</div>';
+  }
+  var day  = lastWeekData[selectedDayIdx];
+  var html = buildDaySelector();
+  html += '<table style="min-width:0"><thead><tr>' +
+          '<th style="text-align:left">Time</th>' +
+          '<th>' + esc(day.dayLabel) + '</th>' +
+          '</tr></thead><tbody>';
+
+  for (var hour = DAY_START; hour < DAY_END; hour++) {
+    var slotStart = new Date(day.dateStr + 'T' + String(hour).padStart(2,'0') + ':00:00').getTime();
+    var slotEnd   = slotStart + 3600000;
+    var events    = day.data[cartName] || [];
+    var ev        = events.find(function(e) { return e.start < slotEnd && e.end > slotStart; });
+
+    html += '<tr><td class="time-col">' + formatHour(hour) + ' &ndash; ' + formatHour(hour + 1) + '</td>';
+    if (!ev) {
+      html += '<td class="free" onclick="openModal(\'' + esc(cartName) + '\',' + hour + ',\'' + day.dateStr + '\')">' +
+              '<div class="cell-inner"><span class="cell-label">&#10010; Free</span>' +
+              '<span class="cell-sub">Tap to book</span></div></td>';
+    } else {
+      html += bookedCell(ev, cartName, false);
+    }
+    html += '</tr>';
+  }
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function buildFullWeekGridHtml(cartName) {
+  var html = '<table><thead><tr><th>Time</th>';
+  lastWeekData.forEach(function(day) { html += '<th>' + esc(day.dayLabel) + '</th>'; });
+  html += '</tr></thead><tbody>';
+
+  for (var hour = DAY_START; hour < DAY_END; hour++) {
+    html += '<tr><td class="time-col">' + formatHour(hour) + ' &ndash; ' + formatHour(hour + 1) + '</td>';
+
+    lastWeekData.forEach(function(day) {
+      var slotStart = new Date(day.dateStr + 'T' + String(hour).padStart(2,'0') + ':00:00').getTime();
+      var slotEnd   = slotStart + 3600000;
+      var events    = day.data[cartName] || [];
+      var ev        = events.find(function(e) { return e.start < slotEnd && e.end > slotStart; });
+
+      if (!ev) {
+        html += '<td class="free" onclick="openModal(\'' + esc(cartName) + '\',' + hour + ',\'' + day.dateStr + '\')">' +
+                '<div class="cell-inner"><span class="cell-label">&#10010; Free</span>' +
+                '<span class="cell-sub">Click to book</span></div></td>';
+      } else {
+        html += bookedCell(ev, cartName, false);
+      }
+    });
+
+    html += '</tr>';
+  }
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function bookedCell(ev, cartName, showCartName) {
+  var tdCls = statusCellClass(ev.status);
+  var label = (showCartName ? esc(cartName) + ': ' : '') + esc(ev.title);
+  var btns  = '';
+  if (ev.status === 'RESERVED') {
+    btns += '<button class="btn btn-success btn-sm" onclick="doCheckOut(\'' +
+            esc(ev.eventId) + '\',\'' + esc(cartName) + '\')">Check Out</button>';
+  } else if (ev.status === 'CHECKED_OUT') {
+    btns += '<button class="btn btn-primary btn-sm" onclick="doCheckIn(\'' +
+            esc(ev.eventId) + '\',\'' + esc(cartName) + '\')">Return</button>';
+  }
+  if (ev.isOwner) {
+    btns += '<button class="btn btn-danger btn-sm" onclick="doCancel(\'' +
+            esc(ev.eventId) + '\',\'' + esc(cartName) + '\')">&#x2715;</button>';
+  }
+  return '<td class="' + tdCls + '"><div class="cell-inner">' +
+         '<span class="cell-label">' + statusIcon(ev.status) + ' ' + label + '</span>' +
+         '<span class="cell-sub">' + esc(statusLabel(ev.status)) + '</span>' +
+         (btns ? '<div class="cell-btns">' + btns + '</div>' : '') +
+         '</div></td>';
+}
+
+function statusCellClass(s) {
+  if (s === 'CHECKED_OUT') return 'checked-out';
+  if (s === 'RETURNED')    return 'returned';
+  return 'booked';
+}
+
+function statusIcon(s) {
+  var cls = s === 'CHECKED_OUT' ? 'status-dot-checked-out' :
+            s === 'RETURNED'    ? 'status-dot-returned'    : 'status-dot-reserved';
+  return '<span class="status-dot ' + cls + '" aria-hidden="true"></span>';
+}
+
+function statusLabel(s) {
+  if (s === 'CHECKED_OUT') return 'Checked Out';
+  if (s === 'RETURNED')    return 'Returned';
+  return 'Reserved';
+}
+
+// ── My Reservations ───────────────────────────────────
+function loadMyReservations() {
+  document.getElementById('myRes').innerHTML = '<div class="loading">Loading...</div>';
+  google.script.run
+    .withSuccessHandler(renderMyRes)
+    .withFailureHandler(function(e) {
+      document.getElementById('myRes').innerHTML =
+        '<div class="empty" style="color:var(--danger)">Error: ' + esc(e.message) + '</div>';
+    })
+    .getMyReservations();
+}
+
+function renderMyRes(list) {
+  if (!list || list.length === 0) {
+    document.getElementById('myRes').innerHTML = '<div class="empty">No upcoming reservations.</div>';
+    return;
+  }
+  var html = '<div class="res-list">';
+  list.forEach(function(r) {
+    var start    = new Date(r.start);
+    var end      = new Date(r.end);
+    var dateOpts = { weekday:'short', month:'short', day:'numeric' };
+    var timeOpts = { hour:'numeric', minute:'2-digit' };
+    var stsCls   = r.status === 'CHECKED_OUT' ? 'status-checked-out' :
+                   r.status === 'RETURNED'    ? 'status-returned'    : 'status-reserved';
+    var badgeCls = r.status === 'CHECKED_OUT' ? 'badge-checked-out' :
+                   r.status === 'RETURNED'    ? 'badge-returned'    : 'badge-reserved';
+    var actions  = '';
+    if (r.status === 'RESERVED') {
+      actions += '<button class="btn btn-success btn-sm" onclick="doCheckOut(\'' +
+                 esc(r.eventId) + '\',\'' + esc(r.cartName) + '\')">Check Out</button>';
+    } else if (r.status === 'CHECKED_OUT') {
+      actions += '<button class="btn btn-primary btn-sm" onclick="doCheckIn(\'' +
+                 esc(r.eventId) + '\',\'' + esc(r.cartName) + '\')">Return</button>';
+    }
+    actions += '<button class="btn btn-danger btn-sm" onclick="doCancel(\'' +
+               esc(r.eventId) + '\',\'' + esc(r.cartName) + '\')">&#x2715; Cancel</button>';
+
+    html += '<div class="res-card ' + stsCls + '">' +
+            '<div class="res-info">' +
+            '<strong>' + esc(r.cartName) + ' &mdash; ' + esc(r.title) + '</strong>' +
+            '<small>' + start.toLocaleDateString(undefined, dateOpts) + '&nbsp;&nbsp;' +
+            start.toLocaleTimeString(undefined, timeOpts) + ' &ndash; ' +
+            end.toLocaleTimeString(undefined, timeOpts) + '</small>' +
+            '<span class="badge ' + badgeCls + '">' + statusIcon(r.status) + ' ' + statusLabel(r.status) + '</span>' +
+            '</div>' +
+            '<div class="res-actions">' + actions + '</div>' +
+            '</div>';
+  });
+  html += '</div>';
+  document.getElementById('myRes').innerHTML = html;
+}
+
+// ── Calendar Embeds ────────────────────────────────────
+function loadCalendarEmbeds() {
+  google.script.run
+    .withSuccessHandler(function(urls) {
+      var names = Object.keys(urls);
+      if (names.length === 0) {
+        document.getElementById('calFrames').innerHTML = '<div class="empty">No calendars configured.</div>';
+        return;
+      }
+      var framesHtml = '';
+      names.forEach(function(name, i) {
+        framesHtml += '<iframe class="cal-frame' + (i === 0 ? ' active' : '') + '" ' +
+                      'id="calFrame_' + i + '" ' +
+                      'src="' + (i === 0 ? esc(urls[name]) : '') + '" ' +
+                      'data-src="' + esc(urls[name]) + '" ' +
+                      'frameborder="0" scrolling="no" ' +
+                      'onload="this.classList.add(\'loaded\')"></iframe>';
+      });
+      document.getElementById('calFrames').innerHTML = framesHtml;
+    })
+    .withFailureHandler(function() {
+      document.getElementById('calFrames').innerHTML = '<div class="empty">Could not load calendar.</div>';
+    })
+    .getCalendarEmbedUrls();
+}
+
+// ── Modal ──────────────────────────────────────────────
+function buildHourOptions(selectId, selected, minH, maxH) {
+  var sel = document.getElementById(selectId);
+  sel.innerHTML = '';
+  for (var h = minH; h <= maxH; h++) {
+    var opt = document.createElement('option');
+    opt.value = h;
+    opt.textContent = formatHour(h);
+    if (h === selected) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function openModal(cartName, hour, dateStr) {
+  pendingBooking = { cartName: cartName, dateStr: dateStr };
+
+  document.getElementById('mCart').value = cartName;
+  document.getElementById('mDate').value =
+    new Date(dateStr + 'T12:00:00').toLocaleDateString(undefined,
+      { weekday:'short', month:'short', day:'numeric' });
+  buildHourOptions('mStartHour', hour,     DAY_START, DAY_END - 1);
+  buildHourOptions('mEndHour',   hour + 1, DAY_START + 1, DAY_END);
+  document.getElementById('mName').value    = currentUser.name || '';
+  document.getElementById('mPeriod').value  = '';
+  document.getElementById('mRecurring').checked = false;
+  document.getElementById('recurringOptions').style.display = 'none';
+  document.getElementById('recurWeeks').checked = true;
+  toggleRecurType();
+  if (window._mobileScale) {
+    var s = window._mobileScale;
+    var modal = document.querySelector('.modal');
+    modal.style.width = Math.round(window.innerWidth * 0.95) + 'px';
+    modal.style.maxWidth = 'none';
+    modal.style.zoom = s;
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(function() { document.getElementById('mName').focus(); }, 100);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  pendingBooking = null;
+}
+
+function toggleRecurring() {
+  var on = document.getElementById('mRecurring').checked;
+  document.getElementById('recurringOptions').style.display = on ? 'block' : 'none';
+}
+
+function toggleRecurType() {
+  var isWeeks = document.getElementById('recurWeeks').checked;
+  document.getElementById('mWeeks').disabled   = !isWeeks;
+  document.getElementById('mEndDate').disabled = isWeeks;
+}
+
+function submitBooking() {
+  if (!pendingBooking) return;
+  var name = document.getElementById('mName').value.trim();
+  if (!name) { showToast('Please enter your name.', 'error'); return; }
+
+  var startHour = parseInt(document.getElementById('mStartHour').value, 10);
+  var endHour   = parseInt(document.getElementById('mEndHour').value, 10);
+  if (endHour <= startHour) {
+    showToast('End time must be after start time.', 'error'); return;
+  }
+
+  var params = {
+    cartName:    pendingBooking.cartName,
+    dateString:  pendingBooking.dateStr,
+    startHour:   startHour,
+    endHour:     endHour,
+    teacherName: name,
+    period:      document.getElementById('mPeriod').value.trim()
+  };
+
+  var isRecurring = document.getElementById('mRecurring').checked;
+  if (isRecurring) {
+    var recurType = document.querySelector('input[name="recurType"]:checked').value;
+    params.recurrenceType = recurType;
+    if (recurType === 'weeks') {
+      var weeks = parseInt(document.getElementById('mWeeks').value, 10);
+      if (!weeks || weeks < 1) { showToast('Please enter a valid number of weeks.', 'error'); return; }
+      params.weeks = weeks;
+    } else {
+      params.endDate = document.getElementById('mEndDate').value;
+      if (!params.endDate) { showToast('Please select an end date.', 'error'); return; }
+    }
+  }
+
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> ' + (isRecurring ? 'Creating series...' : 'Booking...');
+  closeModal();
+  showToast(isRecurring ? 'Creating recurring reservations...' : 'Booking your slot...', 'success');
+
+  var fnName = isRecurring ? 'createRecurringReservation' : 'createReservation';
+  google.script.run
+    .withSuccessHandler(function() {
+      btn.disabled = false; btn.innerHTML = 'Reserve Cart';
+      showToast(isRecurring ? 'Weekly reservations created!' : 'Cart reserved!', 'success');
+      loadWeekAvailability();
+      loadMyReservations();
+    })
+    .withFailureHandler(function(e) {
+      btn.disabled = false; btn.innerHTML = 'Reserve Cart';
+      showToast('Error: ' + e.message, 'error');
+    })
+    [fnName](params);
+}
+
+// ── Actions ────────────────────────────────────────────
+var pendingAction = null;
+var confirmTimer  = null;
+
+function showConfirm(msg, onConfirm) {
+  if (confirmTimer) clearTimeout(confirmTimer);
+  pendingAction = onConfirm;
+  var el = document.getElementById('toast');
+  el.innerHTML = esc(msg) + ' <button onclick="confirmAction()" style="margin-left:10px;background:white;color:#111827;border:none;border-radius:6px;padding:3px 10px;font-weight:700;cursor:pointer;font-size:.8rem">Confirm</button>';
+  el.className = 'show confirm';
+  confirmTimer = setTimeout(function() {
+    el.className = ''; pendingAction = null; el.innerHTML = '';
+  }, 5000);
+}
+
+function confirmAction() {
+  if (confirmTimer) clearTimeout(confirmTimer);
+  document.getElementById('toast').className = '';
+  var fn = pendingAction; pendingAction = null;
+  if (fn) fn();
+}
+
+function doCheckOut(eventId, cartName) {
+  showConfirm('Check out this cart?', function() {
+    google.script.run
+      .withSuccessHandler(function() { showToast('Marked as checked out.', 'success'); refresh(); })
+      .withFailureHandler(function(e) { showToast('Error: ' + e.message, 'error'); })
+      .checkOut(eventId, cartName);
+  });
+}
+
+function doCheckIn(eventId, cartName) {
+  showConfirm('Mark this cart as returned?', function() {
+    google.script.run
+      .withSuccessHandler(function() { showToast('Cart marked as returned.', 'success'); refresh(); })
+      .withFailureHandler(function(e) { showToast('Error: ' + e.message, 'error'); })
+      .checkIn(eventId, cartName);
+  });
+}
+
+function doCancel(eventId, cartName) {
+  showConfirm('Cancel this reservation?', function() {
+    google.script.run
+      .withSuccessHandler(function() { showToast('Reservation cancelled.', 'success'); refresh(); })
+      .withFailureHandler(function(e) { showToast('Error: ' + e.message, 'error'); })
+      .cancelReservation(eventId, cartName);
+  });
+}
+
+function refresh() {
+  loadWeekAvailability();
+  loadMyReservations();
+}
+
+// ── Utilities ──────────────────────────────────────────
+var toastTimer = null;
+function showToast(msg, type) {
+  if (confirmTimer) clearTimeout(confirmTimer);
+  pendingAction = null;
+  var el = document.getElementById('toast');
+  el.innerHTML = esc(msg);
+  el.className = 'show ' + (type || 'success');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.className = ''; }, 3200);
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Appends mobile run-time issues visibly to the screen
+window.onerror = function(message, source, lineno, colno, error) {
+  var errorDiv = document.createElement('div');
+  errorDiv.style.position = 'fixed';
+  errorDiv.style.bottom = '0'; errorDiv.style.left = '0';
+  errorDiv.style.background = '#991b1b'; errorDiv.style.color = 'white';
+  errorDiv.style.zIndex = '99999'; errorDiv.style.padding = '12px';
+  errorDiv.style.width = '100%'; errorDiv.style.fontSize = '12px';
+  errorDiv.textContent = 'Mobile Error: ' + message + ' (Line: ' + lineno + ')';
+  document.body.appendChild(errorDiv);
+  return false;
+};
+</script>
 </body>
 </html>
